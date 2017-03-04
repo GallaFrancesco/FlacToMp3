@@ -23,7 +23,7 @@ IFS=$'\n'
 for dir in $(find "$1" -type d)
 do
 	# for each FLAC file in the subdirectory $dir of $1, convert it to mp3
-	for a in $(find $dir -name "*.flac")
+	for a in $(find $dir -maxdepth 1 -name "*.flac")
 	do
 		let cnt=$cnt+1
 		ffmpeg -i "$a" -qscale:a 0 "${a[@]/%flac/mp3}"
@@ -37,12 +37,13 @@ do
 		# move each file to that subdir
 		for file in $(find $dir -name "*.mp3")
 		do
-			mv $file $DIRNAME/$dir
+			mv "$file" "$DIRNAME/$dir"
 		done
 
 		echo "Converted $cnt files to mp3 in directory $dir"
 		let cnt=0
 	fi
 done
+
 IFS="$OIFS"
 echo "Conversion terminated."
